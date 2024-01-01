@@ -1,27 +1,18 @@
 #!/usr/bin/python3
-'''
-For a given employee ID, returns information about his/her
-TODO list progress in CSV format.
-'''
+"""Exports to-do list information for a given employee ID to CSV format."""
+import csv
+import requests
+import sys
 
-if __name__ == '__main__':
-    import csv
-    import requests
-    import sys
+if __name__ == "__main__":
+    user_id = sys.argv[1]
+    url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get(url + "users/{}".format(user_id)).json()
+    username = user.get("username")
+    todos = requests.get(url + "todos", params={"userId": user_id}).json()
 
-    NUMBER_OF_DONE_TASKS = 0
-    TASK_TITLE = []
-    USER_ID = sys.argv[1]
-    user = requests.get('https://jsonplaceholder.typicode.com/users/{}'.
-                        format(USER_ID))
-    name = user.json()
-
-    req = requests.get('https://jsonplaceholder.typicode.com/todos?userId={}'.
-                       format(USER_ID))
-    todos = req.json()
-
-    with open(USER_ID + '.csv', 'w', newline='') as csv_file:
-        write = csv.writer(csv_file, quoting=csv.QUOTE_ALL)
-        for item in todos:
-            write.writerow([name['id'], name['username'],
-                            item['completed'], item['title']])
+    with open("{}.csv".format(user_id), "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        [writer.writerow(
+            [user_id, username, t.get("completed"), t.get("title")]
+         ) for t in todos]
