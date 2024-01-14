@@ -12,15 +12,13 @@ def number_of_subscribers(subreddit):
     url = 'https://www.reddit.com/r/{}/about.json'.format(subreddit)
     user_agent = 'reddit_user'
 
-    headers = {'User-Agent': user_agent}
+    headers = {'User-Agent': "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"}
 
     req = requests.get(url, headers=headers, allow_redirects=False)
 
     if req.status_code == 404:
         return 0
 
-    data = req.json()['data']
-    page_list = data['children']
-    page_data = page_list[0]['data']
+    result = response.json().get("data")
 
-    return page_data['subreddit_subscribers']
+    return result.get("subscribers")
